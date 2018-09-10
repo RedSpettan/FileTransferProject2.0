@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -6,6 +7,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLOutput;
+import java.util.Properties;
 
 public class Server {
 
@@ -13,7 +16,7 @@ public class Server {
 
         ServerConfigurations serverConfig = configureServer();
 
-        System.out.println("Here!");
+        DisplayFileTree.AnalyzeDirectory(serverConfig.fileDirectory);
 
 
     }
@@ -31,7 +34,9 @@ public class Server {
 
         config.fileDirectory = getRootDirectory();
 
+        System.out.println(config.fileDirectory);
         config.remotePort = getRemotePort();
+
 
         System.out.println("Remote port chosen: " + config.remotePort);
 
@@ -42,39 +47,45 @@ public class Server {
     }
 
     private Path getRootDirectory(){
-        String directory;
 
-        while (true){
-            directory = JOptionPane.showInputDialog("Enter a root directory:");
+        JFileChooser fileChooser = new JFileChooser();
 
-            //System.out.println(directory);
-            if(directory == null){
-                System.exit(0);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        while(true){
+
+            int resultCode = fileChooser.showOpenDialog(null);
+
+            if(resultCode == JOptionPane.NO_OPTION){
+
+                int exitResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit?", JOptionPane.YES_NO_OPTION);
+                System.out.println(exitResult);
+
+                if(exitResult == 0){
+                    System.exit(0);
+                }
             }
 
-            if(directory.isEmpty()){
-                JOptionPane.showMessageDialog(null,"ERROR: Enter something into the text field", "ERROR!", JOptionPane.ERROR_MESSAGE);
-            }else{
-                Path rootDirectory = Paths.get(directory);
+            //System.out.println(resultCode);
 
-                if(!Files.isDirectory(rootDirectory)){
-                    JOptionPane.showMessageDialog(null, "Please enter a valid root directory!", "ERROR", 0);
+            if(resultCode == JFileChooser.APPROVE_OPTION){
+                String fileName = fileChooser.getSelectedFile().getAbsolutePath();
 
-                    System.err.println("Please enter a valid root directory");
+                System.out.println("Is it a directory? " + Files.isDirectory(Paths.get(fileName)));
 
-                }else{break;}
-
+                break;
             }
         }
 
-        return Paths.get(directory);
+        return Paths.get(fileChooser.getSelectedFile().getAbsolutePath());
+
     }
     private int getRemotePort(){
 
         int remotePort;
 
         while(true){
-            String port = JOptionPane.showInputDialog("Enter a non-occupied ");
+            String port = JOptionPane.showInputDialog("Enter a non-occupied remote port to listen for incoming connections:");
 
             int parsedPort = Integer.parseInt(port);
 
