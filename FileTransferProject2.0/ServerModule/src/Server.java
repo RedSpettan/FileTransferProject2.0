@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -7,8 +6,6 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLOutput;
-import java.util.Properties;
 
 public class Server {
 
@@ -16,7 +13,13 @@ public class Server {
 
         ServerConfigurations serverConfig = configureServer();
 
-        DisplayFileTree.AnalyzeDirectory(serverConfig.fileDirectory);
+        String[] files = FileInformation.AnalyzeDirectory(serverConfig.fileDirectory);
+
+        for(String text: files){
+
+            System.out.println(FileInformation.DisplayFileExtension(Paths.get(text)));
+
+        }
 
 
     }

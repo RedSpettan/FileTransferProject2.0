@@ -6,36 +6,39 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisplayFileTree {
+public class FileInformation {
 
-    public static void AnalyzeDirectory(Path directory){
 
+    public static String[] AnalyzeDirectory(Path directory){
+
+        //Check if the given method parameter exist
         if(!Files.isDirectory(directory) ){
             System.exit(0);
         }
 
+        //Store the directory path
         Path pathToDirectory = directory;
 
-        String[] stringPaths = new String[0];
-
+        //Array list used to store file results
         List<Path> result = new ArrayList<>();
 
+        //Try to open a directory stream to the given directory
         try(DirectoryStream<Path> stream = Files.newDirectoryStream(pathToDirectory)) {
 
+            //Store all entries found in the directory stream
             for(Path entry: stream){
                 result.add(entry);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        stringPaths = new String[result.size()];
+
+        String[] paths = new String[result.size()];
 
         for(Path entry: result){
 
-
-            stringPaths[result.indexOf(entry)] = entry.toString();
+            paths[result.indexOf(entry)] = entry.toString();
 
             System.out.println(entry.toString());
             //System.out.println(Files.isDirectory(entry));
@@ -47,7 +50,32 @@ public class DisplayFileTree {
 
         }
 
-        /*for(String text: stringPaths){
+        return paths;
+
+
+
+
+
+
+    }
+
+
+    public static String DisplayFileExtension(Path filePath){
+
+
+        if(Files.notExists(filePath) || Files.isDirectory(filePath)){
+            return null;
+        }
+
+        String localFilePath = filePath.toString();
+
+        int lastDot = localFilePath.lastIndexOf(".");
+
+        String fileExtension = localFilePath.substring(lastDot + 1);
+
+        return fileExtension;
+
+        /*for(String text: paths){
 
             //System.out.println(Files.isDirectory(Paths.get(text)));
 
@@ -69,9 +97,6 @@ public class DisplayFileTree {
             }
 
         }*/
-
-
-
 
     }
 
